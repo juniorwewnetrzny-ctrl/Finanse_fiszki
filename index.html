@@ -265,4 +265,26 @@
             resultDiv.innerHTML = `🎉 Fenomenalnie! Twój wynik to ${score}/${quizData.length}.<br><span style="font-size:0.8em; font-weight:400;">Znasz wszystkie pojęcia finansowe perfekcyjnie!</span>`;
         } else {
             resultDiv.className = 'result-error';
-            resultDiv.innerHTML = `🧐 Twój wynik to
+            resultDiv.innerHTML = `🧐 Twój wynik to ${score}/${quizData.length}.<br><span style="font-size:0.8em; font-weight:400;">Sprawdź zaznaczone na czerwono odpowiedzi i spróbuj jeszcze raz!</span>`;
+        }
+
+        document.getElementById('check-btn').style.display = 'none';
+        document.getElementById('reset-btn').style.display = 'block';
+    }
+
+    function resetQuiz() {
+        const resultDiv = document.getElementById('result');
+        resultDiv.style.display = 'none';
+        resultDiv.className = '';
+        
+        document.getElementById('check-btn').style.display = 'block';
+        document.getElementById('reset-btn').style.display = 'none';
+        renderQuiz(); 
+    }
+
+    // Uruchomienie generowania na start
+    window.onload = renderQuiz;
+</script>
+
+</body>
+</html>
