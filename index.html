@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edukacja Finansowa - Interaktywny Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #444;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #2c3e50;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+        
+        .question-box {
+            margin-bottom: 25px;
+            padding: 20px;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+        .question-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+        }
+        .question-box p {
+            margin-top: 0;
+            font-weight: 600;
+            color: #34495e;
+            font-size: 1.05em;
+        }
+        
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            margin-top: 15px;
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            color: #495057;
+            background-color: #fff;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        select:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+        
+        .buttons-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        #check-btn {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: #fff;
+        }
+        #check-btn:hover {
+            background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        #reset-btn {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            color: #d63031;
+            display: none;
+        }
+        #reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .correct {
+            background-color: #f1fbf4 !important;
+            border-color: #2ecc71 !important;
+        }
+        .incorrect {
+            background-color: #fdf3f2 !important;
+            border-color: #e74c3c !important;
+        }
+        #result {
+            margin-top: 30px;
+            font-size: 1.4em;
+            text-align: center;
+            font-weight: 600;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+        .result-success {
+            background-color: #e8f8f5;
+            color: #16a085;
+            border: 2px solid #1abc9c;
+        }
+        .result-error {
+            background-color: #fcf3f2;
+            color: #c0392b;
+            border: 2px solid #e74c3c;
+        }
+        .q-number {
+            display: inline-block;
+            background: #e9ecef;
+            color: #495057;
+            width: 28px;
+            height: 28px;
+            text-align: center;
+            line-height: 28px;
+            border-radius: 50%;
+            margin-right: 10px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>💸 Mistrz Finansów</h1>
+        <p>Połącz odpowiednie pojęcia z ich definicjami, aby sprawdzić swoją wiedzę o finansach osobistych!</p>
+    </div>
+    
+    <div id="quiz-container"></div>
+    
+    <div class="buttons-container">
+        <button id="check-btn" onclick="checkAnswers()">✨ Sprawdź odpowiedzi</button>
+        <button id="reset-btn" onclick="resetQuiz()">🔄 Spróbuj ponownie</button>
+    </div>
+    <div id="result"></div>
+</div>
+
+<script>
+    const quizData = [
+        { definition: "Plan zarządzania własnymi finansami, obejmujący zestawienie wszystkich przychodów oraz wydatków w określonym czasie (np. w miesiącu).", answer: "Budżet osobisty" },
+        { definition: "Wydatki niezbędne do codziennego funkcjonowania (np. opłaty, podstawowe czy jedzenie).", answer: "Potrzeby" },
+        { definition: "Wydatki opcjonalne stanowiące dodatek lub rozrywkę (np. wyjścia ze znajomymi, modne ubrania). Nie są niezbędne do codziennego funkcjonowania.", answer: "Zachcianki" },
+        { definition: "Rezerwa finansowa odkładana na wypadek nieprzewidzianych zdarzeń losowych (np. awarii sprzętu) lub na realizację celów długoterminowych.", answer: "Poduszka finansowa" },
+        { definition: "Zjawisko finansowe polegające na tym, że drobne, codzienne i pozornie nieistotne wydatki (np. kawa na wynos, przekąski, drobne subskrypcje) w skali miesiąca lub roku sumują się do znacznych kwot.", answer: "Efekt Latte" },
+        { definition: "Sposób naliczania odsetek, w którym odsetki za dany okres są dodawane do kapitału początkowego i w kolejnych okresach same generują kolejne odsetki co znacząco przyspiesza wzrost oszczędności.", answer: "Procent składany" },
+        { definition: "Środki udostępnione przez bank na określonych w umowie warunkach (cel, wysokość, termin spłaty), które biorca zobowiązuje się oddać wraz z odsetkami i ewentualną prowizją.", answer: "Kredyt" },
+        { definition: "Środki, które dawca (bank, firma lub osoba prywatna) przekazuje biorcy na własność a ten zobowiązuje się do ich zwrotu w ustalonym czasie (najczęściej bez konieczności określania celu).", answer: "Pożyczka" },
+        { definition: "Proces ciągłego wzrostu ogólnego poziomu cen dóbr oraz usług w gospodarce, prowadzący do spadku siły nabywczej pieniądza.", answer: "Inflacja" },
+        { definition: "Angażowanie środków finansowych w określone aktywa lub produkty z myślą o uzyskaniu zysku w przyszłości, zamiast przeznaczania ich na bieżącą konsumpcję.", answer: "Inwestowanie" }
+    ];
+
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    const options = quizData.map(q => q.answer).sort();
+    let shuffledData = [];
+
+    function renderQuiz() {
+        shuffledData = shuffle([...quizData]);
+        const quizContainer = document.getElementById('quiz-container');
+        quizContainer.innerHTML = ''; 
+
+        shuffledData.forEach((item, index) => {
+            const box = document.createElement('div');
+            box.className = 'question-box';
+            box.id = 'question-' + index;
+            
+            let selectHTML = `<select id="select-${index}">
+                <option value="">Wybierz pojęcie z listy...</option>`;
+            options.forEach(opt => {
+                selectHTML += `<option value="${opt}">${opt}</option>`;
+            });
+            selectHTML += `</select>`;
+
+            box.innerHTML = `<p><span class="q-number">${index + 1}</span> ${item.definition}</p>` + selectHTML;
+            box.dataset.answer = item.answer;
+            quizContainer.appendChild(box);
+        });
+    }
+
+    function checkAnswers() {
+        let score = 0;
+        let allAnswered = true;
+
+        shuffledData.forEach((item, index) => {
+            const select = document.getElementById('select-' + index);
+            if (select.value === "") {
+                allAnswered = false;
+            }
+        });
+
+        if (!allAnswered) {
+            alert("⚠️ Hej! Wygląda na to, że pominąłeś niektóre pytania. Uzupełnij wszystkie pola przed sprawdzeniem.");
+            return;
+        }
+
+        shuffledData.forEach((item, index) => {
+            const box = document.getElementById('question-' + index);
+            const select = document.getElementById('select-' + index);
+            const userAnswer = select.value;
+            const correctAnswer = box.dataset.answer;
+
+            box.classList.remove('correct', 'incorrect');
+            select.disabled = true; 
+
+            if (userAnswer === correctAnswer) {
+                box.classList.add('correct');
+                score++;
+            } else {
+                box.classList.add('incorrect');
+            }
+        });
+
+        const resultDiv = document.getElementById('result');
+        resultDiv.style.display = 'block';
+        
+        if (score === quizData.length) {
+            resultDiv.className = 'result-success';
+            resultDiv.innerHTML = `🎉 Fenomenalnie! Twój wynik to ${score}/${quizData.length}.<br><span style="font-size:0.8em; font-weight:400;">Znasz wszystkie pojęcia finansowe perfekcyjnie!</span>`;
+        } else {
+            resultDiv.className = 'result-error';
+            resultDiv.innerHTML = `🧐 Twój wynik to
